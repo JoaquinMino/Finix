@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Finix</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="icon" href="../img/finix-head.png" type="image/png">
+</head>
+
+<body>
+  <aside class="sidebar" id="sidebar">
+    <a href="index.html" class="brand">
+      <img src="../img/finix-logo.png" alt="Finix" class="brand-logo">
+    </a>
+
+    <nav class="nav">
+      <button class="nav-link active" data-section="dashboard">Inicio</button>
+      <button class="nav-link" data-section="ingresos">Ingresos</button>
+      <button class="nav-link" data-section="gastos">Gastos</button>
+      <button class="nav-link" data-section="categorias">Categorías</button>
+      <button class="nav-link" data-section="metas">Metas</button>
+    </nav>
+  </aside>
+
+  <main class="main">
+    <header class="topbar">
+      <div>
+        <h1 id="pageTitle">Inicio</h1>
+        <p id="pageSubtitle">Resumen mensual</p>
+      </div>
+
+      <div class="topbar-actions">
+        <button id="sidebarToggle" class="btn btn-secondary mobile-only">☰</button>
+        <div class="month-switch">
+          <button id="prevMonth">‹</button>
+          <span id="currentMonth"></span>
+          <button id="nextMonth">›</button>
+        </div>
+      </div>
+    </header>
+
+    <section class="section active" id="section-dashboard">
+      <div class="stats">
+        <div class="card stat">
+          <span>Ingresos</span>
+          <strong id="totalIncome">$0</strong>
+        </div>
+        <div class="card stat">
+          <span>Gastos</span>
+          <strong id="totalExpense">$0</strong>
+        </div>
+        <div class="card stat">
+          <span>Balance</span>
+          <strong id="netBalance">$0</strong>
+        </div>
+        <div class="card stat">
+          <span>Ahorro</span>
+          <strong id="savingRate">0%</strong>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="row between">
+          <h2>Carga rápida</h2>
+          <div class="inline-tabs">
+            <button class="quick-tab active" data-qtype="ingreso">Ingreso</button>
+            <button class="quick-tab" data-qtype="gasto">Gasto</button>
+          </div>
+        </div>
+
+        <div class="grid-form">
+          <input id="quickDesc" type="text" placeholder="Descripción" />
+          <input id="quickAmount" type="text" inputmode="numeric" placeholder="Monto" />
+          <select id="quickCategory">
+            <option value="">Sin categoría</option>
+          </select>
+          <input id="quickDate" type="date" />
+          <button class="btn" id="quickSaveBtn">Agregar</button>
+        </div>
+      </div>
+
+      <div class="two-cols">
+        <div class="card">
+          <div class="row between">
+            <h2>Últimas transacciones</h2>
+          </div>
+          <ul class="list" id="recentTransactions"></ul>
+        </div>
+
+        <div class="card">
+          <div class="row between">
+            <h2>Gastos por categoría</h2>
+            <button class="btn btn-secondary" id="setSavingGoalBtn">Meta ahorro</button>
+          </div>
+          <div id="categoryBreakdown"></div>
+          <div class="saving-box">
+            <small id="savingGoalLabel">Meta de ahorro: $0</small>
+            <div class="progress">
+              <div id="budgetFill"></div>
+            </div>
+            <small id="budgetSpentLabel">$0 gastado</small>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="section-ingresos">
+      <div class="row between">
+        <h2>Ingresos del mes</h2>
+        <button class="btn" id="addIncomeBtn">Agregar ingreso</button>
+      </div>
+      <div class="card">
+        <div class="summary" id="incomeTotal">$0</div>
+        <ul class="list" id="incomeList"></ul>
+      </div>
+    </section>
+
+    <section class="section" id="section-gastos">
+      <div class="row between">
+        <h2>Gastos del mes</h2>
+        <button class="btn" id="addExpenseBtn">Agregar gasto</button>
+      </div>
+      <div class="card">
+        <div class="summary" id="expenseTotal">$0</div>
+        <ul class="list" id="expenseList"></ul>
+      </div>
+    </section>
+
+    <section class="section" id="section-categorias">
+      <div class="row between">
+        <h2>Categorías</h2>
+        <button class="btn" id="addCategoryBtn">Nueva categoría</button>
+      </div>
+
+      <div class="card">
+        <h3>Predefinidas</h3>
+        <div class="chips" id="defaultCategoriesGrid"></div>
+      </div>
+
+      <div class="card">
+        <h3>Personalizadas</h3>
+        <div class="chips" id="categoriesGrid"></div>
+      </div>
+    </section>
+
+    <section class="section" id="section-metas">
+      <div class="row between">
+        <h2>Metas</h2>
+        <button class="btn" id="addGoalBtn">Nueva meta</button>
+      </div>
+      <div class="goals" id="goalsGrid"></div>
+    </section>
+  </main>
+
+  <div class="modal hidden" id="transactionModal">
+    <div class="modal-box">
+      <div class="row between">
+        <h3 id="modalTitle">Agregar transacción</h3>
+        <button class="icon-btn" id="closeTransactionModal">✕</button>
+      </div>
+
+      <div class="inline-tabs" id="txTabToggle">
+        <button class="tab-btn active" data-type="ingreso">Ingreso</button>
+        <button class="tab-btn" data-type="gasto">Gasto</button>
+      </div>
+
+      <div class="form">
+        <input id="txDescription" type="text" placeholder="Descripción" />
+        <input id="txAmount" type="text" inputmode="numeric" placeholder="Monto" />
+        <select id="txCategory">
+          <option value="">Sin categoría</option>
+        </select>
+        <input id="txDate" type="date" />
+        <input id="txNote" type="text" placeholder="Nota opcional" />
+      </div>
+
+      <div class="row end">
+        <button class="btn btn-secondary" id="cancelTransaction">Cancelar</button>
+        <button class="btn" id="saveTransaction">Guardar</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal hidden" id="categoryModal">
+    <div class="modal-box">
+      <div class="row between">
+        <h3>Nueva categoría</h3>
+        <button class="icon-btn" id="closeCategoryModal">✕</button>
+      </div>
+
+      <div class="form">
+        <input id="catName" type="text" placeholder="Nombre" />
+
+        <select id="catEmoji">
+          <option value="📂">📂</option>
+          <option value="💼">💼</option>
+          <option value="🛒">🛒</option>
+          <option value="🏠">🏠</option>
+          <option value="🚗">🚗</option>
+          <option value="💊">💊</option>
+          <option value="🎮">🎮</option>
+          <option value="📚">📚</option>
+          <option value="☕">☕</option>
+          <option value="⚡">⚡</option>
+        </select>
+
+        <input id="catColor" type="color" value="#7c3aed" />
+
+        <select id="catType">
+          <option value="gasto">Gasto</option>
+          <option value="ingreso">Ingreso</option>
+          <option value="ambos">Ambos</option>
+        </select>
+      </div>
+
+      <div class="row end">
+        <button class="btn btn-secondary" id="cancelCategory">Cancelar</button>
+        <button class="btn" id="saveCategory">Guardar</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal hidden" id="savingGoalModal">
+    <div class="modal-box">
+      <div class="row between">
+        <h3>Meta de ahorro mensual</h3>
+        <button class="icon-btn" id="closeSavingGoalModal">✕</button>
+      </div>
+
+      <div class="form">
+        <input id="savingGoalInput" type="text" inputmode="numeric" placeholder="Monto" />
+      </div>
+
+      <div class="row end">
+        <button class="btn btn-secondary" id="cancelSavingGoal">Cancelar</button>
+        <button class="btn" id="saveSavingGoal">Guardar</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal hidden" id="goalModal">
+    <div class="modal-box">
+      <div class="row between">
+        <h3 id="goalModalTitle">Nueva meta</h3>
+        <button class="icon-btn" id="closeGoalModal">✕</button>
+      </div>
+
+      <div class="form">
+        <input id="goalName" type="text" placeholder="Nombre de la meta" />
+        <input id="goalTarget" type="text" inputmode="numeric" placeholder="Monto objetivo" />
+        <input id="goalCurrent" type="text" inputmode="numeric" placeholder="Ahorrado hasta ahora" />
+        <input id="goalDeadline" type="date" />
+        <select id="goalEmoji">
+          <option value="🎯">🎯</option>
+          <option value="✈️">✈️</option>
+          <option value="🚗">🚗</option>
+          <option value="🏠">🏠</option>
+          <option value="💻">💻</option>
+          <option value="📷">📷</option>
+        </select>
+      </div>
+
+      <div class="row end">
+        <button class="btn btn-secondary" id="cancelGoal">Cancelar</button>
+        <button class="btn" id="saveGoal">Guardar</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
